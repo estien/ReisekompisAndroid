@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Line {
     private int id;
     private String name;
-    @JsonProperty(value="trans")
+    @JsonProperty(value="type")
     private TransportationType transportationType;
 
     public int getId() {
@@ -30,6 +30,10 @@ public class Line {
 
     public void setTransportationType(TransportationType transportationType) {
         this.transportationType = transportationType;
+    }
+
+    public String toString() {
+        return name + " (" + transportationType.toString() + ")";
     }
 
 }

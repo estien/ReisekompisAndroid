@@ -6,10 +6,15 @@ import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.SearchView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +25,8 @@ import info.reisekompis.reisekompis.configuration.ReisekompisService;
 
 public class FindStopsActivity extends Activity {
     private HttpClient httpClient;
+    private ListeFragment listeFragment;
+    private PublicTransportationStop[] transportationStops;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,7 +39,7 @@ public class FindStopsActivity extends Activity {
         if (savedInstanceState == null) {
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            ListeFragment listeFragment = new ListeFragment();
+            listeFragment = new ListeFragment();
             fragmentTransaction.replace(R.id.list_container, listeFragment).commit();
             fragmentManager.executePendingTransactions();
         }
@@ -46,7 +53,7 @@ public class FindStopsActivity extends Activity {
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            if (query != null && query.length() > 4) {
+            if (query != null && query.length() > 3) {
                 new TestAsyncTask().execute(ReisekompisService.SEARCH + query);
             }
         }
@@ -74,22 +81,31 @@ public class FindStopsActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    class TestAsyncTask extends AsyncTask<String, Void, String> {
+    class TestAsyncTask extends AsyncTask<String, Void, PublicTransportationStop[]> {
         @Override
-        protected String doInBackground(String... params) {
-            String result = httpClient.get(params[0]);
-
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
+        protected PublicTransportationStop[] doInBackground(String... params) {
+            String jsonResponseString = httpClient.get(params[0]);
             ObjectMapper mapper = new ObjectMapper();
             try {
-                SearchResult[] searchResults = mapper.readValue(result, SearchResult[].class);
+                return mapper.readValue(jsonResponseString, PublicTransportationStop[].class);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return new PublicTransportationStop[0];
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(PublicTransportationStop[] result) {
+            if(result == null) return;
+            ArrayAdapter<PublicTransportationStop> arrayAdapter = new ArrayAdapter<PublicTransportationStop>(FindStopsActivity.this, android.R.layout.simple_list_item_1);
+            transportationStops = result;
+            arrayAdapter.addAll(transportationStops);
+            listeFragment.setListAdapter(arrayAdapter);
         }
     }
 }
