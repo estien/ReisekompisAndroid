@@ -1,6 +1,5 @@
-package info.reisekompis.reisekompis;
+package info.reisekompis.reisekompis.activities;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -12,7 +11,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 
@@ -20,6 +18,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
+import info.reisekompis.reisekompis.HttpClient;
+import info.reisekompis.reisekompis.R;
+import info.reisekompis.reisekompis.Stop;
+import info.reisekompis.reisekompis.StopListFragment;
+import info.reisekompis.reisekompis.StopsArrayAdapter;
 import info.reisekompis.reisekompis.configuration.ReisekompisService;
 
 public class FindStopsActivity extends Activity {
@@ -44,6 +47,11 @@ public class FindStopsActivity extends Activity {
             fragmentTransaction.replace(R.id.list_container, listeFragment).commit();
             fragmentManager.executePendingTransactions();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -104,11 +112,10 @@ public class FindStopsActivity extends Activity {
         @Override
         protected void onPostExecute(Stop[] result) {
             searchingProgressBar.setVisibility(View.INVISIBLE);
-            if(result == null) return;
-            ArrayAdapter<Stop> arrayAdapter = new ArrayAdapter<Stop>(FindStopsActivity.this, android.R.layout.simple_list_item_1);
+            if (result == null) return;
             transportationStops = result;
-            arrayAdapter.addAll(transportationStops);
-            listeFragment.setListAdapter(arrayAdapter);
+            StopsArrayAdapter stopsArrayAdapter = new StopsArrayAdapter(FindStopsActivity.this, R.layout.stop_list_item, result);
+            listeFragment.setListAdapter(stopsArrayAdapter);
         }
     }
 }

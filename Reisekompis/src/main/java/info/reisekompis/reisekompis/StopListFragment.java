@@ -17,7 +17,7 @@ public class StopListFragment extends ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new String[0]);
+        StopsArrayAdapter adapter = new StopsArrayAdapter(getActivity(), R.layout.stop_list_item, new Stop[0]);
         setListAdapter(adapter);
         return super.onCreateView(inflater, container, savedInstanceState);
     }

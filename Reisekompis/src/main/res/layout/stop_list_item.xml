@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:padding="@dimen/activity_horizontal_margin">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Jernbanetorget (F.Olsens g syd)"
+        android:id="@+id/stop_name_text"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Oslo"
+        android:id="@+id/stop_district_text"
+        android:layout_below="@+id/stop_name_text"/>
+
+    <RelativeLayout
+        android:id="@+id/lines_container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/stop_district_text">
+
+        <LinearLayout
+            android:id="@+id/bus_lines"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginRight="5dp">
+            <ImageView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:src="@android:drawable/btn_star"/>
+            <TextView
+                android:id="@+id/bus_lines_text"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="419, 476, 542"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="5dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/tram_lines"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_toRightOf="@id/bus_lines">
+            <ImageView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:src="@android:drawable/btn_star_big_on"/>
+            <TextView
+                android:id="@+id/tram_lines_text"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="1, 2, 3, 4, 5, 6"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="5dp"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>
