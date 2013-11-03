@@ -7,11 +7,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class StopsArrayAdapter extends ArrayAdapter {
+public class StopsAdapter extends ArrayAdapter {
 
     private final LayoutInflater inflater;
 
-    public StopsArrayAdapter(Context context, int resource, Stop[] objects) {
+    public StopsAdapter(Context context, int resource, Stop[] objects) {
         super(context, resource, objects);
         inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -28,11 +28,7 @@ public class StopsArrayAdapter extends ArrayAdapter {
         district.setText(stop.getDistrict());
 
         TextView busLines  = (TextView) view.findViewById(R.id.bus_lines_text);
-        StringBuilder builder = new StringBuilder();
-        for(Line line : stop.getLines()){
-            builder.append(line.getName() + ", ");
-        }
-        busLines.setText(builder.toString());
+        busLines.setText(StringHelper.Join(",", stop.getLines().toArray()));
 
         return view;
     }

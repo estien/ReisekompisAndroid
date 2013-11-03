@@ -33,7 +33,7 @@ public class Line {
     }
 
     public String toString() {
-        return name + " (" + transportationType.toString() + ")";
+        return name;
     }
 
 }

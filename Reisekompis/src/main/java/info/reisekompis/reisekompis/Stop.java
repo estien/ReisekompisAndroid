@@ -37,12 +37,7 @@ public class Stop {
     }
 
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(name + "\r\n");
-        for(Line line : lines) {
-            builder.append(line.toString() + ", ");
-        }
-        return builder.toString();
+        return name + "\r\n" + StringHelper.Join(",", lines.toArray());
     }
 
 }
