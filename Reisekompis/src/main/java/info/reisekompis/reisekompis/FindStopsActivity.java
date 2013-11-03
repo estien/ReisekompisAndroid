@@ -1,5 +1,6 @@
 package info.reisekompis.reisekompis;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -10,7 +11,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,12 +26,14 @@ public class FindStopsActivity extends Activity {
     private HttpClient httpClient;
     private StopListFragment listeFragment;
     private Stop[] transportationStops;
+    private ProgressBar searchingProgressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.find_stops_activity);
         httpClient = new HttpClient();
+        searchingProgressBar = (ProgressBar) findViewById(R.id.progress_bar_searching);
 
         handleIntent(getIntent());
 
@@ -62,11 +67,9 @@ public class FindStopsActivity extends Activity {
         getMenuInflater().inflate(R.menu.main, menu);
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.search).getActionView();
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
-
         return true;
     }
 
@@ -95,10 +98,12 @@ public class FindStopsActivity extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            searchingProgressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected void onPostExecute(Stop[] result) {
+            searchingProgressBar.setVisibility(View.INVISIBLE);
             if(result == null) return;
             ArrayAdapter<Stop> arrayAdapter = new ArrayAdapter<Stop>(FindStopsActivity.this, android.R.layout.simple_list_item_1);
             transportationStops = result;
