@@ -22,7 +22,7 @@ public class HttpClient {
             data = response.getEntity().getContent();
             reader = new BufferedReader(new InputStreamReader(data, "UTF-8"));
             StringBuilder builder = new StringBuilder();
-            for (String line = null; (line = reader.readLine()) != null;) {
+            for (String line; (line = reader.readLine()) != null;) {
                 builder.append(line).append("\n");
             }
             result = builder.toString();

@@ -2,7 +2,7 @@ package info.reisekompis.reisekompis;
 
 import java.util.List;
 
-public class PublicTransportationStop {
+public class Stop {
     private int id;
     private String name;
     private String district;
