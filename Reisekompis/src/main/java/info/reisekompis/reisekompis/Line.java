@@ -6,7 +6,7 @@ public class Line {
     private int id;
     private String name;
     @JsonProperty(value="type")
-    private TransportationType transportationType;
+    private TransportationType.Type transportationType;
 
     public int getId() {
         return id;
@@ -24,11 +24,11 @@ public class Line {
         this.name = name;
     }
 
-    public TransportationType getTransportationType() {
+    public TransportationType.Type getTransportationType() {
         return transportationType;
     }
 
-    public void setTransportationType(TransportationType transportationType) {
+    public void setTransportationType(TransportationType.Type transportationType) {
         this.transportationType = transportationType;
     }
 
