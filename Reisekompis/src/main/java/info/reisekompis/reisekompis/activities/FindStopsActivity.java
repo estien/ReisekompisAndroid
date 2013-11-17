@@ -62,7 +62,7 @@ public class FindStopsActivity extends Activity implements OnListItemSelectedLis
             String query = intent.getStringExtra(SearchManager.QUERY);
             if (query != null) {
                 query = query.trim();
-                if(query.length() < 4) return;
+                if(query.length() < 4) return; // TODO: add dialog informing about minimum search length
                 new SearchStopsAsyncTask().execute(ReisekompisService.SEARCH + query);
             }
         }

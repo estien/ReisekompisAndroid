@@ -8,5 +8,6 @@
     <string name="choose">Velg</string>
     <string name="save">Lagre</string>
     <string name="settings">Settings</string>
+    <string name="no_lines_selected_temp">Ingen linjer valgt. Trykk menyknappen for å stille inn.</string>
 
 </resources>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:padding="12dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="4"
+        android:id="@+id/departure_line_name"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sognsvann"
+        android:id="@+id/depature_destination"
+        android:layout_toRightOf="@+id/departure_line_name"
+        android:layout_alignBaseline="@id/departure_line_name"
+        android:layout_marginLeft="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="fra Grønland"
+        android:id="@+id/depature_stop_name"
+        android:layout_toRightOf="@+id/depature_destination"
+        android:layout_alignBaseline="@id/departure_line_name"
+        android:layout_marginLeft="10dp"/>
+
+
+    <RelativeLayout
+        android:id="@+id/departure_details"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginRight="5dp"
+        android:layout_below="@id/departure_line_name">
+
+        <TextView
+            android:id="@+id/departure_time_prefix"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Neste avgang"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"/>
+
+        <TextView
+            android:id="@+id/departure_time"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="kl 20.30"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@id/departure_time_prefix"
+            android:layout_alignBottom="@id/departure_time_prefix"/>
+    </RelativeLayout>
+
+</RelativeLayout>

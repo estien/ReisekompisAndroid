@@ -1,6 +1,7 @@
 package info.reisekompis.reisekompis.activities;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.util.Log;
+import android.view.View;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
@@ -20,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import info.reisekompis.reisekompis.Departure;
+import info.reisekompis.reisekompis.DepartureAdapter;
 import info.reisekompis.reisekompis.HttpClient;
 import info.reisekompis.reisekompis.Line;
 import info.reisekompis.reisekompis.R;
@@ -34,7 +37,7 @@ import static info.reisekompis.reisekompis.configuration.Configuration.SHARED_PR
 import static java.util.Arrays.asList;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends ListActivity {
 
     HttpClient httpClient;
     SharedPreferences sharedPreferences;
@@ -92,6 +95,12 @@ public class MainActivity extends Activity {
         @Override
         protected void onPostExecute(Departure[] departures) {
             Log.d(getClass().getName(), Arrays.toString(departures));
+            DepartureAdapter adapter = new DepartureAdapter(MainActivity.this, R.id.departure_line_name, departures);
+            if(departures.length > 0)
+            {
+                findViewById(R.id.no_departures_selected).setVisibility(View.INVISIBLE);
+            }
+            setListAdapter(adapter);
         }
     }
 
