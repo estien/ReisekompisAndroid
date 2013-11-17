@@ -4,7 +4,7 @@ import java.util.List;
 
 public class TransportationType {
 
-    enum Type {
+    public enum Type {
         WALKING(0),
         AIRPORT_BUS(1),
         BUS(2),

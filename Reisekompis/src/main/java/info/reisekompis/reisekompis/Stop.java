@@ -1,5 +1,7 @@
 package info.reisekompis.reisekompis;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.util.List;
 
 public class Stop {
@@ -7,6 +9,17 @@ public class Stop {
     private String name;
     private String district;
     private List<Line> lines;
+
+    @JsonCreator
+    public Stop() {
+    }
+
+    public Stop(int id, String name, String district, List<Line> lines) {
+        this.id = id;
+        this.name = name;
+        this.district = district;
+        this.lines = lines;
+    }
 
     public int getId() { return id; }
 

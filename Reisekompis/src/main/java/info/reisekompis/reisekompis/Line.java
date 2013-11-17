@@ -1,5 +1,6 @@
 package info.reisekompis.reisekompis;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Line {
@@ -7,6 +8,16 @@ public class Line {
     private String name;
     @JsonProperty(value="type")
     private TransportationType.Type transportationType;
+
+    @JsonCreator
+    public Line() {
+    }
+
+    public Line(int id, String name, TransportationType.Type transportationType) {
+        this.id = id;
+        this.name = name;
+        this.transportationType = transportationType;
+    }
 
     public int getId() {
         return id;
