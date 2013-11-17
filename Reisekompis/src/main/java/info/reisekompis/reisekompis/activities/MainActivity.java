@@ -2,9 +2,13 @@ package info.reisekompis.reisekompis.activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
@@ -42,8 +46,6 @@ public class MainActivity extends Activity {
         List<TransportationType> lines = getDummyData();
 
         new PollAsyncTask().execute(lines);
-
-//        startActivity(new Intent(this, FindStopsActivity.class));
     }
 
     private class PollAsyncTask extends AsyncTask<List<TransportationType>, Void, Departure[]> {
@@ -86,5 +88,26 @@ public class MainActivity extends Activity {
         list.add(new TransportationType(stops2, TransportationType.Type.BUS));
 
         return list;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings_menu_action: {
+                startActivity(new Intent(this, FindStopsActivity.class));
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

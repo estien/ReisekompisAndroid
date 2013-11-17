@@ -7,5 +7,6 @@
     <string name="search_hint">Liverpool is the shit</string>
     <string name="choose">Velg</string>
     <string name="save">Lagre</string>
+    <string name="settings">Settings</string>
 
 </resources>
