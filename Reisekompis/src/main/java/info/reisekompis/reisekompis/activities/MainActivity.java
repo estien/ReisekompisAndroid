@@ -6,10 +6,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import info.reisekompis.reisekompis.Departure;
 import info.reisekompis.reisekompis.HttpClient;
 import info.reisekompis.reisekompis.Line;
 import info.reisekompis.reisekompis.R;
@@ -42,37 +50,45 @@ public class MainActivity extends Activity {
 //        startActivity(new Intent(this, FindStopsActivity.class));
     }
 
-    private class PollAsyncTask extends AsyncTask<List<TransportationType>, Void, Void> {
+    private class PollAsyncTask extends AsyncTask<List<TransportationType>, Void, Departure[]> {
 
         @Override
-        protected Void doInBackground(List<TransportationType>... params) {
+        protected Departure[] doInBackground(List<TransportationType>... params) {
             List<SimpleStop> simpleStops = new ArrayList<SimpleStop>();
             for (TransportationType t : params[0]) {
                 simpleStops.addAll(simpleStopsFromStops(t.getStops()));
             }
 
-            httpClient.post(ReisekompisService.POLL, simpleStops);
-            return null;
+            String jsonResponseString = httpClient.post(ReisekompisService.POLL, simpleStops);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JodaModule());
+            Departure[] result;
+            try {
+                result = mapper.readValue(jsonResponseString, Departure[].class);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new Departure[0];
+            }
+            return result;
         }
     }
 
     private List<TransportationType> getDummyData() {
         List<TransportationType> list = new ArrayList<TransportationType>();
 
-        for (int i = 1; i <= 2; i++) {
+        List<Stop> stops1 = new ArrayList<Stop>();
+        List<Line> lines1 = new ArrayList<Line>();
+        lines1.add(new Line(1, "Line ", TransportationType.Type.METRO));
+        lines1.add(new Line(2, "Line ", TransportationType.Type.METRO));
+        stops1.add(new Stop(3010610, "Grønland", "Oslo", lines1));
+        list.add(new TransportationType(stops1, TransportationType.Type.METRO));
 
-            List<Stop> stops = new ArrayList<Stop>();
-            for (int j = 1; j <= 2; j++) {
+        List<Stop> stops2 = new ArrayList<Stop>();
+        List<Line> lines2 = new ArrayList<Line>();
+        lines2.add(new Line(8401, "Line", TransportationType.Type.BUS));
+        stops2.add(new Stop(6041460, "Et eller annet", "Oslo", lines2));
+        list.add(new TransportationType(stops2, TransportationType.Type.BUS));
 
-                List<Line> lines = new ArrayList<Line>();
-                for (int k = 1; k <= 3; k++) {
-                    lines.add(new Line(k, "Line " + k, TransportationType.Type.values()[i]));
-                }
-
-                stops.add(new Stop(j, "Stop " + j, "District " + j, lines));
-            }
-            list.add(new TransportationType(stops, TransportationType.Type.values()[i]));
-        }
         return list;
     }
 }
