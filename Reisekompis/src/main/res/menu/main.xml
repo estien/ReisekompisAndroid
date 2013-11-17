@@ -4,4 +4,10 @@
     <item android:id="@+id/settings_menu_action"
         android:title="@string/settings">
     </item>
+    <item
+        android:id="@+id/action_refresh"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:icon="@android:drawable/ic_menu_rotate"
+        android:title="Refresh"/>
 </menu>

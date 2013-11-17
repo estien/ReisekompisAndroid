@@ -39,7 +39,7 @@ public class FindStopsActivity extends Activity implements OnListItemSelectedLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.find_stops_activity);
+        setContentView(R.layout.activity_find_stops);
         httpClient = new HttpClient();
         searchingProgressBar = (ProgressBar) findViewById(R.id.progress_bar_searching);
         sharedPreferences = getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, MODE_PRIVATE);

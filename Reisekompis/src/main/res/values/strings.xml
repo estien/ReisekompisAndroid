@@ -9,5 +9,6 @@
     <string name="save">Lagre</string>
     <string name="settings">Settings</string>
     <string name="no_lines_selected_temp">Ingen linjer valgt. Trykk menyknappen for å stille inn.</string>
+    <string name="last_updated">Sist oppdatert kl</string>
 
 </resources>

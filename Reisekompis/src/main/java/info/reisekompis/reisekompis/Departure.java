@@ -1,5 +1,6 @@
 package info.reisekompis.reisekompis;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -12,6 +13,17 @@ public class Departure {
     @JsonDeserialize(using = CustomDateTimeDeserializer.class)
     private DateTime time;
     private String destination;
+
+    @JsonProperty(required = false)
+    private String stopName;
+
+    public String getStopName() {
+        return stopName;
+    }
+
+    public void setStopName(String stopName) {
+        this.stopName = stopName;
+    }
 
     public void setStopId(int stopId) {
         this.stopId = stopId;

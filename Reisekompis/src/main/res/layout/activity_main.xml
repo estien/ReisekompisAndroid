@@ -3,14 +3,55 @@
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ListView android:id="@android:id/list"
+    <TextView
+        android:id="@+id/no_departures_selected"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/no_lines_selected_temp"
+        android:visibility="invisible"/>
+
+    <LinearLayout
+        android:id="@+id/last_updated_container"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:visibility="invisible">
+
+        <TextView
+            android:id="@+id/last_updated_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/last_updated"
+            android:textStyle="italic"/>
+
+        <TextView
+            android:id="@+id/last_updated_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="13:37"
+            android:textStyle="italic"/>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:drawSelectorOnTop="false"/>
+        android:drawSelectorOnTop="false"
+        android:layout_below="@id/last_updated_container"
+        android:layout_marginTop="-17dp"/>
 
-    <TextView android:id="@+id/no_departures_selected"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/no_lines_selected_temp"/>
+    <ProgressBar
+        android:id="@+id/progress_bar_loading_departures"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="invisible"/>
+
 </RelativeLayout>

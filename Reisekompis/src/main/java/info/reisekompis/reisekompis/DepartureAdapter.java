@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import org.joda.time.DateTimeZone;
+
 public class DepartureAdapter extends ArrayAdapter {
 
     private final LayoutInflater inflater;
@@ -28,7 +30,10 @@ public class DepartureAdapter extends ArrayAdapter {
         departureText.setText(departure.getDestination());
 
         TextView time = (TextView) view.findViewById(R.id.departure_time);
-        time.setText(departure.getTime().toLocalDateTime().toString());
+        time.setText(departure.getTime().withZone(DateTimeZone.getDefault()).toString("HH:mm"));
+
+        TextView departureStopText = (TextView) view.findViewById(R.id.depature_stop_name);
+        departureStopText.setText(departure.getStopName());
 
         return view;
     }
