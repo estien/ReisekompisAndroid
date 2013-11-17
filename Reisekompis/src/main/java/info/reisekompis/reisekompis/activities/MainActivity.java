@@ -2,19 +2,15 @@ package info.reisekompis.reisekompis.activities;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import info.reisekompis.reisekompis.Departure;
@@ -76,15 +72,15 @@ public class MainActivity extends Activity {
     private List<TransportationType> getDummyData() {
         List<TransportationType> list = new ArrayList<TransportationType>();
 
-        List<Stop> stops1 = new ArrayList<Stop>();
-        List<Line> lines1 = new ArrayList<Line>();
+        ArrayList<Stop> stops1 = new ArrayList<Stop>();
+        ArrayList<Line> lines1 = new ArrayList<Line>();
         lines1.add(new Line(1, "Line ", TransportationType.Type.METRO));
         lines1.add(new Line(2, "Line ", TransportationType.Type.METRO));
         stops1.add(new Stop(3010610, "Grønland", "Oslo", lines1));
         list.add(new TransportationType(stops1, TransportationType.Type.METRO));
 
-        List<Stop> stops2 = new ArrayList<Stop>();
-        List<Line> lines2 = new ArrayList<Line>();
+        ArrayList<Stop> stops2 = new ArrayList<Stop>();
+        ArrayList<Line> lines2 = new ArrayList<Line>();
         lines2.add(new Line(8401, "Line", TransportationType.Type.BUS));
         stops2.add(new Stop(6041460, "Et eller annet", "Oslo", lines2));
         list.add(new TransportationType(stops2, TransportationType.Type.BUS));

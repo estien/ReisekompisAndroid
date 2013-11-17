@@ -2,19 +2,19 @@ package info.reisekompis.reisekompis;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class Stop {
     private int id;
     private String name;
     private String district;
-    private List<Line> lines;
+    private ArrayList<Line> lines;
 
     @JsonCreator
     public Stop() {
     }
 
-    public Stop(int id, String name, String district, List<Line> lines) {
+    public Stop(int id, String name, String district, ArrayList<Line> lines) {
         this.id = id;
         this.name = name;
         this.district = district;
@@ -41,11 +41,11 @@ public class Stop {
         this.district = district;
     }
 
-    public List<Line> getLines() {
+    public ArrayList<Line> getLines() {
         return lines;
     }
 
-    public void setLines(List<Line> lines) {
+    public void setLines(ArrayList<Line> lines) {
         this.lines = lines;
     }
 
@@ -53,4 +53,7 @@ public class Stop {
         return name + "\r\n" + StringHelper.Join(",", lines.toArray());
     }
 
+    public void addLine(Line line) {
+        lines.add(line);
+    }
 }

@@ -1,5 +1,7 @@
 package info.reisekompis.reisekompis;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.util.List;
 
 public class TransportationType {
@@ -34,6 +36,9 @@ public class TransportationType {
         this.type = type;
     }
 
+    @JsonCreator
+    public TransportationType(){}
+
     public List<Stop> getStops() {
         return stops;
     }
@@ -41,4 +46,17 @@ public class TransportationType {
     public Type getType() {
         return type;
     }
+
+    public void setStops(List<Stop> stops) {
+        this.stops = stops;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public void addStop(Stop stop) {
+        stops.add(stop);
+    }
+
 }

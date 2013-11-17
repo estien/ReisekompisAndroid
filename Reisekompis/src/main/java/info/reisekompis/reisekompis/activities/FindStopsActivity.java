@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,20 +13,26 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.List;
 
 import info.reisekompis.reisekompis.HttpClient;
 import info.reisekompis.reisekompis.R;
 import info.reisekompis.reisekompis.Stop;
 import info.reisekompis.reisekompis.StopsAdapter;
-import info.reisekompis.reisekompis.fragments.StopListFragment;
+import info.reisekompis.reisekompis.TransportationType;
+import info.reisekompis.reisekompis.configuration.Configuration;
 import info.reisekompis.reisekompis.configuration.ReisekompisService;
+import info.reisekompis.reisekompis.fragments.StopListFragment;
 
-public class FindStopsActivity extends Activity {
+public class FindStopsActivity extends Activity implements OnListItemSelectedListener {
     private HttpClient httpClient;
     private ProgressBar searchingProgressBar;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,7 +40,7 @@ public class FindStopsActivity extends Activity {
         setContentView(R.layout.find_stops_activity);
         httpClient = new HttpClient();
         searchingProgressBar = (ProgressBar) findViewById(R.id.progress_bar_searching);
-
+        sharedPreferences = getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         handleIntent(getIntent());
 
         if (savedInstanceState == null) {
@@ -76,6 +83,20 @@ public class FindStopsActivity extends Activity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onListItemsSelected(List<TransportationType> types) {
+        ObjectMapper mapper = new ObjectMapper();
+        editor = sharedPreferences.edit();
+        String json = null;
+        try {
+            json = mapper.writeValueAsString(types);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        editor.putString("transportationTypes", json);
+        editor.commit();
     }
 
     class SearchStopsAsyncTask extends AsyncTask<String, Void, Stop[]> {
