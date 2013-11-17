@@ -78,6 +78,7 @@ public class StopListFragment extends ListFragment {
                 if (types.size() > 0) {
                     listener.onListItemsSelected(types);
                 }
+                dialog.dismiss();
             }
         });
         AlertDialog dialog = alertDialogBuilder.create();
