@@ -28,6 +28,8 @@ import info.reisekompis.reisekompis.configuration.Configuration;
 import info.reisekompis.reisekompis.configuration.ReisekompisService;
 import info.reisekompis.reisekompis.fragments.StopListFragment;
 
+import static info.reisekompis.reisekompis.configuration.Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES;
+
 public class FindStopsActivity extends Activity implements OnListItemSelectedListener {
     private HttpClient httpClient;
     private ProgressBar searchingProgressBar;
@@ -95,7 +97,7 @@ public class FindStopsActivity extends Activity implements OnListItemSelectedLis
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        editor.putString("transportationTypes", json);
+        editor.putString(SHARED_PREFERENCES_TRANSPORTATION_TYPES, json);
         editor.commit();
     }
 

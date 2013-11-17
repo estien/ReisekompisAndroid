@@ -9,12 +9,14 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import info.reisekompis.reisekompis.Departure;
@@ -28,11 +30,14 @@ import info.reisekompis.reisekompis.configuration.Configuration;
 import info.reisekompis.reisekompis.configuration.ReisekompisService;
 
 import static info.reisekompis.reisekompis.SimpleStop.simpleStopsFromStops;
+import static info.reisekompis.reisekompis.configuration.Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES;
+import static java.util.Arrays.asList;
 
 
 public class MainActivity extends Activity {
 
     HttpClient httpClient;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +46,25 @@ public class MainActivity extends Activity {
 
         httpClient = new HttpClient();
 
-        SharedPreferences sharedPreferences = this.getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        String s = sharedPreferences.getString(SHARED_PREFERENCES_TRANSPORTATION_TYPES, null);
+        if (s == null) {
+            startActivity(new Intent(this, FindStopsActivity.class));
+        }
+    }
 
-        List<TransportationType> lines = getDummyData();
-
-        new PollAsyncTask().execute(lines);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String s = sharedPreferences.getString(SHARED_PREFERENCES_TRANSPORTATION_TYPES, null);
+        if (s == null) return;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            TransportationType[] transportationTypes = objectMapper.readValue(s, TransportationType[].class);
+            new PollAsyncTask().execute(asList(transportationTypes));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private class PollAsyncTask extends AsyncTask<List<TransportationType>, Void, Departure[]> {
@@ -68,6 +87,11 @@ public class MainActivity extends Activity {
                 return new Departure[0];
             }
             return result;
+        }
+
+        @Override
+        protected void onPostExecute(Departure[] departures) {
+            Log.d(getClass().getName(), Arrays.toString(departures));
         }
     }
 
