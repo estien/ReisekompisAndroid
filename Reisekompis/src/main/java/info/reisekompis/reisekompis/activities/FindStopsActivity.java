@@ -17,6 +17,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import info.reisekompis.reisekompis.HttpClient;
@@ -90,15 +92,34 @@ public class FindStopsActivity extends Activity implements OnListItemSelectedLis
     @Override
     public void onListItemsSelected(List<TransportationType> types) {
         ObjectMapper mapper = new ObjectMapper();
-        editor = sharedPreferences.edit();
+
+        TransportationType[] existingTransportationTypes = GetStoredTransportationTypes(mapper);
+        if(existingTransportationTypes.length > 0) {
+            types = MergeExistingWithSelectedTranportationTypes(existingTransportationTypes, types);
+        }
+
         String json = null;
         try {
             json = mapper.writeValueAsString(types);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+
+        editor = sharedPreferences.edit();
         editor.putString(SHARED_PREFERENCES_TRANSPORTATION_TYPES, json);
         editor.commit();
+    }
+
+    private List<TransportationType> MergeExistingWithSelectedTranportationTypes(TransportationType[] existingTransportationTypes, List<TransportationType> types) {
+        return types; // TODO implement
+    }
+
+    private TransportationType[] GetStoredTransportationTypes(ObjectMapper mapper) {
+        try {
+            return mapper.readValue(sharedPreferences.getString(Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES, null), TransportationType[].class); // TODO make sure is not null
+        } catch (IOException e) {
+            e.printStackTrace();
+        } return new TransportationType[0];
     }
 
     class SearchStopsAsyncTask extends AsyncTask<String, Void, Stop[]> {
