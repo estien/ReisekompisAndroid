@@ -19,9 +19,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import info.reisekompis.reisekompis.HttpClient;
+import info.reisekompis.reisekompis.Line;
 import info.reisekompis.reisekompis.R;
 import info.reisekompis.reisekompis.Stop;
 import info.reisekompis.reisekompis.StopsAdapter;
@@ -110,16 +113,32 @@ public class FindStopsActivity extends Activity implements OnListItemSelectedLis
         editor.commit();
     }
 
-    private List<TransportationType> MergeExistingWithSelectedTranportationTypes(TransportationType[] existingTransportationTypes, List<TransportationType> types) {
-        return types; // TODO implement
+    private List<TransportationType> MergeExistingWithSelectedTranportationTypes(TransportationType[] existingTransportationTypes, List<TransportationType> selectedLines) {
+
+
+
+        return selectedLines; // TODO implement
+    }
+
+    private void AddAllLines(HashSet<Line> allLines, TransportationType[] types) {
+        for (TransportationType type : types) {
+            for (Stop stop : type.getStops()) {
+                for(Line line : stop.getLines()) {
+                    allLines.add(line);
+                }
+            }
+        }
+
     }
 
     private TransportationType[] GetStoredTransportationTypes(ObjectMapper mapper) {
         try {
-            return mapper.readValue(sharedPreferences.getString(Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES, null), TransportationType[].class); // TODO make sure is not null
+            TransportationType[] transportationTypes = mapper.readValue(sharedPreferences.getString(Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES, null), TransportationType[].class);// TODO make sure is not null
+            return transportationTypes != null ? transportationTypes : new TransportationType[0];
         } catch (IOException e) {
             e.printStackTrace();
-        } return new TransportationType[0];
+        }
+        return new TransportationType[0];
     }
 
     class SearchStopsAsyncTask extends AsyncTask<String, Void, Stop[]> {
