@@ -46,7 +46,7 @@ public class FindStopsActivity extends Activity implements OnListItemSelectedLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_stops);
         httpClient = new HttpClient();
-        searchingProgressBar = (ProgressBar) findViewById(R.id.progress_bar_searching);
+        searchingProgressBar = (ProgressBar) findViewById(R.id.progress_bar_searching_old);
         sharedPreferences = getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         handleIntent(getIntent());
 
@@ -76,8 +76,7 @@ public class FindStopsActivity extends Activity implements OnListItemSelectedLis
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.find_stops, menu);
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         return true;
@@ -114,9 +113,6 @@ public class FindStopsActivity extends Activity implements OnListItemSelectedLis
     }
 
     private List<TransportationType> MergeExistingWithSelectedTranportationTypes(TransportationType[] existingTransportationTypes, List<TransportationType> selectedLines) {
-
-
-
         return selectedLines; // TODO implement
     }
 

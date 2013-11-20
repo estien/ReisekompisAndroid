@@ -54,4 +54,10 @@
         android:layout_centerInParent="true"
         android:visibility="invisible"/>
 
+    <FrameLayout
+        android:id="@+id/stop_list_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
+    
 </RelativeLayout>

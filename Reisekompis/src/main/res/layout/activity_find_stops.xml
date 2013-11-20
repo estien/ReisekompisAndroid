@@ -1,12 +1,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
     <FrameLayout
-        android:id="@+id/stop_list_fragment_container"
+        android:id="@+id/stop_list_fragment_container_old"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </FrameLayout>
     <ProgressBar
-        android:id="@+id/progress_bar_searching"
+        android:id="@+id/progress_bar_searching_old"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_centerInParent="true"
