@@ -34,7 +34,7 @@ import info.reisekompis.reisekompis.configuration.ReisekompisService;
 import static info.reisekompis.reisekompis.SimpleStop.simpleStopsFromStops;
 import static info.reisekompis.reisekompis.configuration.Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES;
 
-public class ListDeparturesFragment extends ListFragment {
+public class ListDeparturesFragment extends BaseListFragment {
 
     private TransportationType[] transportationTypes;
     private View lastUpdatedContainer;
@@ -68,14 +68,6 @@ public class ListDeparturesFragment extends ListFragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public SharedPreferences getSharedPreferences() {
-        return ((MainActivity)getActivity()).getSharedPreferences();
-    }
-
-    public HttpClient getHttpClient() {
-        return ((MainActivity) getActivity()).getHttpClient();
     }
 
     private class PollAsyncTask extends AsyncTask<List<TransportationType>, Void, Departure[]> {

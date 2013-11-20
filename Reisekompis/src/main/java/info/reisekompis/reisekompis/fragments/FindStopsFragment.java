@@ -4,12 +4,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +26,7 @@ import info.reisekompis.reisekompis.activities.OnListItemSelectedListener;
 
 import static java.util.Arrays.asList;
 
-public class FindStopsFragment extends ListFragment {
+public class FindStopsFragment extends BaseListFragment {
     OnListItemSelectedListener listener;
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -135,6 +139,37 @@ public class FindStopsFragment extends ListFragment {
         }
 
         return types;
+    }
+
+    class SearchStopsAsyncTask extends AsyncTask<String, Void, Stop[]> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //progressBarLoading.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Stop[] doInBackground(String... params) {
+            String jsonResponseString = getHttpClient().get(params[0]);
+            ObjectMapper mapper = new ObjectMapper();
+            Stop[] result;
+            try {
+                result = mapper.readValue(jsonResponseString, Stop[].class);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new Stop[0];
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Stop[] result) {
+            //progressBarLoading.setVisibility(View.INVISIBLE);
+            FindStopsFragment fragment = (FindStopsFragment) getFragmentManager().findFragmentById(R.id.main_fragment_container);
+            StopsAdapter adapter = new StopsAdapter(getActivity(), R.layout.stop_list_item, result);
+            fragment.setListAdapter(adapter);
+        }
     }
 
 }

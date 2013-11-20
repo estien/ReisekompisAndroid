@@ -52,34 +52,21 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
 
     HttpClient httpClient;
     SharedPreferences sharedPreferences;
-    private View noDeparturesSelectedView;
-    private View progressBarLoading;
-
-
     private SharedPreferences.Editor editor;
 
-    public SharedPreferences getSharedPreferences() {
-        return sharedPreferences;
-    }
-
-    public HttpClient getHttpClient() {
-        return httpClient;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         httpClient = new HttpClient();
 
-        sharedPreferences = this.getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         String s = sharedPreferences.getString(SHARED_PREFERENCES_TRANSPORTATION_TYPES, null);
         if (s == null) {
             // force search field or first time info popup
         }
 
-        sharedPreferences = getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         handleIntent(getIntent());
 
         if (savedInstanceState == null) {
@@ -106,7 +93,7 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
             if (query != null) {
                 query = query.trim();
                 if(query.length() < 4) return; // TODO: add dialog informing about minimum search length
-                new SearchStopsAsyncTask().execute(ReisekompisService.SEARCH + query);
+                //new SearchStopsAsyncTask().execute(ReisekompisService.SEARCH + query);
             }
         }
     }
@@ -141,6 +128,15 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
         editor.commit();
     }
 
+
+    public SharedPreferences getSharedPreferences() {
+        return sharedPreferences;
+    }
+
+    public HttpClient getHttpClient() {
+        return httpClient;
+    }
+
     private List<TransportationType> MergeExistingWithSelectedTranportationTypes(TransportationType[] existingTransportationTypes, List<TransportationType> selectedLines) {
         return selectedLines; // TODO implement
     }
@@ -153,7 +149,6 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
                 }
             }
         }
-
     }
 
     private TransportationType[] GetStoredTransportationTypes(ObjectMapper mapper) {
@@ -165,38 +160,6 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
         }
         return new TransportationType[0];
     }
-
-    class SearchStopsAsyncTask extends AsyncTask<String, Void, Stop[]> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressBarLoading.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected Stop[] doInBackground(String... params) {
-            String jsonResponseString = httpClient.get(params[0]);
-            ObjectMapper mapper = new ObjectMapper();
-            Stop[] result;
-            try {
-                result = mapper.readValue(jsonResponseString, Stop[].class);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return new Stop[0];
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Stop[] result) {
-            progressBarLoading.setVisibility(View.INVISIBLE);
-            FindStopsFragment fragment = (FindStopsFragment) getFragmentManager().findFragmentById(R.id.main_fragment_container);
-            StopsAdapter adapter = new StopsAdapter(MainActivity.this, R.layout.stop_list_item, result);
-            fragment.setListAdapter(adapter);
-        }
-    }
-
 
 
     private List<TransportationType> getDummyData() {
