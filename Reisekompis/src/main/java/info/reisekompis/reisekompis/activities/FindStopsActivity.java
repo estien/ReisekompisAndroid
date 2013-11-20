@@ -45,38 +45,13 @@ public class FindStopsActivity extends Activity implements OnListItemSelectedLis
         httpClient = new HttpClient();
         searchingProgressBar = (ProgressBar) findViewById(R.id.progress_bar_searching_old);
         sharedPreferences = getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-        handleIntent(getIntent());
 
+        /*
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, new FindStopsFragment())
                 .commit();
-        }
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            if (query != null) {
-                query = query.trim();
-                if(query.length() < 4) return; // TODO: add dialog informing about minimum search length
-                new SearchStopsAsyncTask().execute(ReisekompisService.SEARCH + query);
-            }
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.find_stops, menu);
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        return true;
+        }*/
     }
 
     @Override

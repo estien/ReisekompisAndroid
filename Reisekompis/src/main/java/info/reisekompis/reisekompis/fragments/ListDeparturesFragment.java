@@ -1,7 +1,5 @@
 package info.reisekompis.reisekompis.fragments;
 
-import android.app.ListFragment;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,12 +21,10 @@ import java.util.List;
 
 import info.reisekompis.reisekompis.Departure;
 import info.reisekompis.reisekompis.DepartureAdapter;
-import info.reisekompis.reisekompis.HttpClient;
 import info.reisekompis.reisekompis.R;
 import info.reisekompis.reisekompis.SimpleStop;
 import info.reisekompis.reisekompis.Stop;
 import info.reisekompis.reisekompis.TransportationType;
-import info.reisekompis.reisekompis.activities.MainActivity;
 import info.reisekompis.reisekompis.configuration.ReisekompisService;
 
 import static info.reisekompis.reisekompis.SimpleStop.simpleStopsFromStops;

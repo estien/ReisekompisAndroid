@@ -1,50 +1,34 @@
 package info.reisekompis.reisekompis.activities;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import info.reisekompis.reisekompis.Departure;
-import info.reisekompis.reisekompis.DepartureAdapter;
 import info.reisekompis.reisekompis.HttpClient;
 import info.reisekompis.reisekompis.Line;
 import info.reisekompis.reisekompis.R;
-import info.reisekompis.reisekompis.SimpleStop;
 import info.reisekompis.reisekompis.Stop;
-import info.reisekompis.reisekompis.StopsAdapter;
 import info.reisekompis.reisekompis.TransportationType;
 import info.reisekompis.reisekompis.configuration.Configuration;
-import info.reisekompis.reisekompis.configuration.ReisekompisService;
 import info.reisekompis.reisekompis.fragments.FindStopsFragment;
 import info.reisekompis.reisekompis.fragments.ListDeparturesFragment;
 
-import static info.reisekompis.reisekompis.SimpleStop.simpleStopsFromStops;
 import static info.reisekompis.reisekompis.configuration.Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES;
-import static java.util.Arrays.asList;
 
 
 public class MainActivity extends Activity implements OnListItemSelectedListener  {
@@ -53,6 +37,8 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
     HttpClient httpClient;
     SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+
+    boolean performingSearch;
 
 
     @Override
@@ -67,9 +53,14 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
             // force search field or first time info popup
         }
 
-        handleIntent(getIntent());
+
+        if(performingSearch) {
+            performingSearch = false;
+            return;
+        }
 
         if (savedInstanceState == null) {
+            Log.d("KOMPIS", "MainActivity.OnCreate - Creating ListDeparturesFragment");
             getFragmentManager().beginTransaction()
                     .replace(R.id.main_fragment_container, new ListDeparturesFragment())
                     .commit();
@@ -93,7 +84,17 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
             if (query != null) {
                 query = query.trim();
                 if(query.length() < 4) return; // TODO: add dialog informing about minimum search length
-                //new SearchStopsAsyncTask().execute(ReisekompisService.SEARCH + query);
+
+                performingSearch = true;
+                Bundle args = new Bundle();
+                args.putString("query", query);
+                FindStopsFragment findStopsFragment = new FindStopsFragment();
+                findStopsFragment.setArguments(args);
+
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main_fragment_container, findStopsFragment)
+                        .commit();
             }
         }
     }

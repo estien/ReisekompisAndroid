@@ -28,11 +28,18 @@ import static java.util.Arrays.asList;
 
 public class FindStopsFragment extends BaseListFragment {
     OnListItemSelectedListener listener;
+    private String query;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        StopsAdapter adapter = new StopsAdapter(getActivity(), R.layout.stop_list_item, new Stop[0]);
-        setListAdapter(adapter);
+        //StopsAdapter adapter = new StopsAdapter(getActivity(), R.layout.stop_list_item, new Stop[0]);
+        //setListAdapter(adapter);
     }
 
     @Override
@@ -43,6 +50,12 @@ public class FindStopsFragment extends BaseListFragment {
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement OnListItemSelectedListener");
         }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        new SearchStopsAsyncTask().execute(getArguments().getString("query"));
     }
 
     @Override
@@ -59,7 +72,7 @@ public class FindStopsFragment extends BaseListFragment {
         }
         final List<String> linesToAdd = new ArrayList<String>();
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
         alertDialogBuilder.setTitle(R.string.choose);
         String[] linesToShow = getLinesToShow(lines);
         alertDialogBuilder.setMultiChoiceItems(linesToShow, null, new DialogInterface.OnMultiChoiceClickListener() {
@@ -166,9 +179,8 @@ public class FindStopsFragment extends BaseListFragment {
         @Override
         protected void onPostExecute(Stop[] result) {
             //progressBarLoading.setVisibility(View.INVISIBLE);
-            FindStopsFragment fragment = (FindStopsFragment) getFragmentManager().findFragmentById(R.id.main_fragment_container);
-            StopsAdapter adapter = new StopsAdapter(getActivity(), R.layout.stop_list_item, result);
-            fragment.setListAdapter(adapter);
+            StopsAdapter adapter = new StopsAdapter(activity, R.layout.stop_list_item, result);
+            FindStopsFragment.this.setListAdapter(adapter);
         }
     }
 
