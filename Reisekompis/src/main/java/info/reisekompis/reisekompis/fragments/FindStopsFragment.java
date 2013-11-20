@@ -22,7 +22,7 @@ import info.reisekompis.reisekompis.activities.OnListItemSelectedListener;
 
 import static java.util.Arrays.asList;
 
-public class StopListFragment extends ListFragment {
+public class FindStopsFragment extends ListFragment {
     OnListItemSelectedListener listener;
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -43,7 +43,7 @@ public class StopListFragment extends ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return inflater.inflate(R.layout.fragment_find_stops, container, false);
     }
 
     @Override

@@ -17,9 +17,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -31,7 +28,7 @@ import info.reisekompis.reisekompis.StopsAdapter;
 import info.reisekompis.reisekompis.TransportationType;
 import info.reisekompis.reisekompis.configuration.Configuration;
 import info.reisekompis.reisekompis.configuration.ReisekompisService;
-import info.reisekompis.reisekompis.fragments.StopListFragment;
+import info.reisekompis.reisekompis.fragments.FindStopsFragment;
 
 import static info.reisekompis.reisekompis.configuration.Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES;
 
@@ -52,7 +49,7 @@ public class FindStopsActivity extends Activity implements OnListItemSelectedLis
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                .replace(R.id.stop_list_fragment_container, new StopListFragment())
+                .replace(R.id.main_fragment_container, new FindStopsFragment())
                 .commit();
         }
     }
@@ -162,7 +159,7 @@ public class FindStopsActivity extends Activity implements OnListItemSelectedLis
         @Override
         protected void onPostExecute(Stop[] result) {
             searchingProgressBar.setVisibility(View.INVISIBLE);
-            StopListFragment fragment = (StopListFragment) getFragmentManager().findFragmentById(R.id.stop_list_fragment_container);
+            FindStopsFragment fragment = (FindStopsFragment) getFragmentManager().findFragmentById(R.id.main_fragment_container);
             StopsAdapter adapter = new StopsAdapter(FindStopsActivity.this, R.layout.stop_list_item, result);
             fragment.setListAdapter(adapter);
         }

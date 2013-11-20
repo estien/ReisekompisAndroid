@@ -1,5 +1,6 @@
 package info.reisekompis.reisekompis.activities;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
@@ -38,34 +39,37 @@ import info.reisekompis.reisekompis.StopsAdapter;
 import info.reisekompis.reisekompis.TransportationType;
 import info.reisekompis.reisekompis.configuration.Configuration;
 import info.reisekompis.reisekompis.configuration.ReisekompisService;
-import info.reisekompis.reisekompis.fragments.StopListFragment;
+import info.reisekompis.reisekompis.fragments.FindStopsFragment;
+import info.reisekompis.reisekompis.fragments.ListDeparturesFragment;
 
 import static info.reisekompis.reisekompis.SimpleStop.simpleStopsFromStops;
 import static info.reisekompis.reisekompis.configuration.Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES;
 import static java.util.Arrays.asList;
 
 
-public class MainActivity extends ListActivity implements OnListItemSelectedListener  {
+public class MainActivity extends Activity implements OnListItemSelectedListener  {
+
 
     HttpClient httpClient;
     SharedPreferences sharedPreferences;
     private View noDeparturesSelectedView;
     private View progressBarLoading;
-    private TransportationType[] transportationTypes;
-    private TextView lastUpdatedTime;
-    private View lastUpdatedContainer;
+
 
     private SharedPreferences.Editor editor;
+
+    public SharedPreferences getSharedPreferences() {
+        return sharedPreferences;
+    }
+
+    public HttpClient getHttpClient() {
+        return httpClient;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        noDeparturesSelectedView = findViewById(R.id.no_departures_selected);
-        progressBarLoading = findViewById(R.id.progress_bar_loading_departures);
-        lastUpdatedContainer = findViewById(R.id.last_updated_container);
-        lastUpdatedTime = (TextView) lastUpdatedContainer.findViewById(R.id.last_updated_time);
 
         httpClient = new HttpClient();
 
@@ -80,7 +84,7 @@ public class MainActivity extends ListActivity implements OnListItemSelectedList
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .replace(R.id.stop_list_fragment_container, new StopListFragment())
+                    .replace(R.id.main_fragment_container, new ListDeparturesFragment())
                     .commit();
         }
     }
@@ -88,7 +92,7 @@ public class MainActivity extends ListActivity implements OnListItemSelectedList
     @Override
     protected void onResume() {
         super.onResume();
-        refreshDepartures();
+        //refreshDepartures();
     }
 
     @Override
@@ -187,27 +191,13 @@ public class MainActivity extends ListActivity implements OnListItemSelectedList
         @Override
         protected void onPostExecute(Stop[] result) {
             progressBarLoading.setVisibility(View.INVISIBLE);
-            StopListFragment fragment = (StopListFragment) getFragmentManager().findFragmentById(R.id.stop_list_fragment_container);
+            FindStopsFragment fragment = (FindStopsFragment) getFragmentManager().findFragmentById(R.id.main_fragment_container);
             StopsAdapter adapter = new StopsAdapter(MainActivity.this, R.layout.stop_list_item, result);
             fragment.setListAdapter(adapter);
         }
     }
 
-    private void refreshDepartures() {
-        String s = sharedPreferences.getString(SHARED_PREFERENCES_TRANSPORTATION_TYPES, null);
-        if (s == null) return;
 
-        noDeparturesSelectedView.setVisibility(View.INVISIBLE);
-        progressBarLoading.setVisibility(View.VISIBLE);
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            transportationTypes = objectMapper.readValue(s, TransportationType[].class);
-            new PollAsyncTask().execute(asList(transportationTypes));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     private List<TransportationType> getDummyData() {
         List<TransportationType> list = new ArrayList<TransportationType>();
@@ -228,75 +218,16 @@ public class MainActivity extends ListActivity implements OnListItemSelectedList
         return list;
     }
 
-
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh :
-                refreshDepartures();
+                //refreshDepartures();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private class PollAsyncTask extends AsyncTask<List<TransportationType>, Void, Departure[]> {
 
-        @Override
-        protected Departure[] doInBackground(List<TransportationType>... params) {
-            List<SimpleStop> simpleStops = new ArrayList<SimpleStop>();
-            for (TransportationType t : params[0]) {
-                simpleStops.addAll(simpleStopsFromStops(t.getStops()));
-            }
-
-            String jsonResponseString = httpClient.post(ReisekompisService.POLL, simpleStops);
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(new JodaModule());
-            Departure[] result;
-            try {
-                result = mapper.readValue(jsonResponseString, Departure[].class);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return new Departure[0];
-            }
-
-            boolean stopNameFoundForDeparture = false;
-            for(Departure departure : result) {
-                int stopId  = departure.getStopId();
-                for(TransportationType type : transportationTypes) {
-                    if(stopNameFoundForDeparture) break;
-                    for(Stop stop : type.getStops()) {
-                        if(stop.getId() == stopId) {
-                            departure.setStopName(stop.getName());
-                            stopNameFoundForDeparture = true;
-                            break;
-                        }
-                    }
-                }
-                stopNameFoundForDeparture = false;
-            }
-
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Departure[] departures) {
-            Log.d(getClass().getName(), Arrays.toString(departures));
-            DepartureAdapter adapter = new DepartureAdapter(MainActivity.this, R.id.departure_line_name, departures);
-            progressBarLoading.setVisibility(View.INVISIBLE);
-            boolean anyDepartures = departures.length > 0;
-            noDeparturesSelectedView.setVisibility(anyDepartures ? View.INVISIBLE : View.VISIBLE);
-
-            DateTime now = new DateTime(DateTimeZone.getDefault());
-            lastUpdatedTime.setText(now.toString("HH:mm:ss"));
-
-            if(anyDepartures) {
-                lastUpdatedContainer.setVisibility(View.VISIBLE);
-            }
-
-            setListAdapter(adapter);
-        }
-    }
 }
