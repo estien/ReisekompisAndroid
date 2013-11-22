@@ -54,28 +54,21 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
         }
 
 
-        if(performingSearch) {
-            performingSearch = false;
-            return;
-        }
-
+        /*
         if (savedInstanceState == null) {
             Log.d("KOMPIS", "MainActivity.OnCreate - Creating ListDeparturesFragment");
             getFragmentManager().beginTransaction()
                     .replace(R.id.main_fragment_container, new ListDeparturesFragment())
                     .commit();
-        }
+        } */
+
+        handleIntent(getIntent());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         //refreshDepartures();
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        handleIntent(intent);
     }
 
     private void handleIntent(Intent intent) {
@@ -85,7 +78,6 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
                 query = query.trim();
                 if(query.length() < 4) return; // TODO: add dialog informing about minimum search length
 
-                performingSearch = true;
                 Bundle args = new Bundle();
                 args.putString("query", query);
                 FindStopsFragment findStopsFragment = new FindStopsFragment();

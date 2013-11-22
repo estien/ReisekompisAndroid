@@ -23,6 +23,8 @@ import info.reisekompis.reisekompis.Stop;
 import info.reisekompis.reisekompis.StopsAdapter;
 import info.reisekompis.reisekompis.TransportationType;
 import info.reisekompis.reisekompis.activities.OnListItemSelectedListener;
+import info.reisekompis.reisekompis.configuration.Configuration;
+import info.reisekompis.reisekompis.configuration.ReisekompisService;
 
 import static java.util.Arrays.asList;
 
@@ -33,13 +35,6 @@ public class FindStopsFragment extends BaseListFragment {
     @Override
     public void onStart() {
         super.onStart();
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        //StopsAdapter adapter = new StopsAdapter(getActivity(), R.layout.stop_list_item, new Stop[0]);
-        //setListAdapter(adapter);
     }
 
     @Override
@@ -55,7 +50,8 @@ public class FindStopsFragment extends BaseListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new SearchStopsAsyncTask().execute(getArguments().getString("query"));
+        String searchQuery = ReisekompisService.SEARCH + getArguments().getString("query");
+        new SearchStopsAsyncTask().execute(searchQuery);
     }
 
     @Override
