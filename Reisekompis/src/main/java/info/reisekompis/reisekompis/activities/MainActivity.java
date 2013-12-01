@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -36,8 +38,9 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
     HttpClient httpClient;
     SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    private SearchView searchView;
+    private ProgressBar progressBar;
 
-    boolean performingSearch;
 
 
     @Override
@@ -46,6 +49,7 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
         setContentView(R.layout.activity_main);
         httpClient = new HttpClient();
         sharedPreferences = getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         String s = sharedPreferences.getString(SHARED_PREFERENCES_TRANSPORTATION_TYPES, null);
         if (s == null) {
@@ -54,6 +58,7 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
         else if (!isSearching()){
             getFragmentManager().beginTransaction()
                     .replace(R.id.main_fragment_container, new ListDeparturesFragment())
+                    .addToBackStack(null)
                     .commit();
         }
 
@@ -63,7 +68,6 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
     @Override
     protected void onResume() {
         super.onResume();
-        //refreshDepartures();
     }
 
     private boolean isSearching() {
@@ -90,11 +94,16 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
         }
     }
 
+    public ProgressBar getProgressBar() {
+        return progressBar;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        MenuItem searchMenuItem = menu.findItem(R.id.search);
+        searchView = (SearchView) searchMenuItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         return true;
     }
@@ -120,6 +129,13 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
         editor.commit();
     }
 
+    @Override
+    public void onBackPressed() {
+        if(isSearching()) {
+
+        }
+        super.onBackPressed();
+    }
 
     public SharedPreferences getSharedPreferences() {
         return sharedPreferences;

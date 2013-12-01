@@ -3,6 +3,8 @@ package info.reisekompis.reisekompis.fragments;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.content.SharedPreferences;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import info.reisekompis.reisekompis.HttpClient;
 import info.reisekompis.reisekompis.activities.MainActivity;
@@ -23,5 +25,9 @@ public class BaseListFragment extends ListFragment {
 
     public HttpClient getHttpClient() {
         return activity.getHttpClient();
+    }
+
+    public void setProgressBarVisible(boolean visible) {
+        activity.getProgressBar().setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
     }
 }

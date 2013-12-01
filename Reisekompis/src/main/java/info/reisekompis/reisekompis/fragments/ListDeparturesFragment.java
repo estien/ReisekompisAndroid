@@ -38,7 +38,6 @@ public class ListDeparturesFragment extends BaseListFragment {
 
     private TextView lastUpdatedTime;
     private View noDeparturesSelectedView;
-    private View progressBarLoading;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,12 +45,15 @@ public class ListDeparturesFragment extends BaseListFragment {
 
         lastUpdatedContainer = view.findViewById(R.id.last_updated_container);
         noDeparturesSelectedView = view.findViewById(R.id.no_departures_selected);
-        progressBarLoading = view.findViewById(R.id.progress_bar_loading_departures);
         lastUpdatedTime = (TextView) view.findViewById(R.id.last_updated_time);
 
-        refreshDepartures();
-
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+       refreshDepartures();
     }
 
     private void refreshDepartures() {
@@ -59,8 +61,6 @@ public class ListDeparturesFragment extends BaseListFragment {
         if (s == null) return;
 
         noDeparturesSelectedView.setVisibility(View.INVISIBLE);
-        //progressBarLoading.setVisibility(View.VISIBLE);
-
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -72,6 +72,12 @@ public class ListDeparturesFragment extends BaseListFragment {
     }
 
     private class PollAsyncTask extends AsyncTask<List<TransportationType>, Void, Departure[]> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            setProgressBarVisible(true);
+        }
 
         @Override
         protected Departure[] doInBackground(List<TransportationType>... params) {
@@ -116,7 +122,7 @@ public class ListDeparturesFragment extends BaseListFragment {
             Activity activity1 = getActivity();
             if(activity1 == null) return; // is detached. temp
             DepartureAdapter adapter = new DepartureAdapter(activity1, R.id.departure_line_name, departures);
-            //progressBarLoading.setVisibility(View.INVISIBLE);
+            setProgressBarVisible(false);
             boolean anyDepartures = departures.length > 0;
             noDeparturesSelectedView.setVisibility(anyDepartures ? View.INVISIBLE : View.VISIBLE);
 
