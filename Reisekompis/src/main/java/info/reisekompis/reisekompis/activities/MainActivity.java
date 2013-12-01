@@ -46,20 +46,23 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         httpClient = new HttpClient();
-
         sharedPreferences = getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+
         String s = sharedPreferences.getString(SHARED_PREFERENCES_TRANSPORTATION_TYPES, null);
         if (s == null) {
             // force search field or first time info popup
+        }
+        else {
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.main_fragment_container, new ListDeparturesFragment())
+                    .commit();
         }
 
 
         /*
         if (savedInstanceState == null) {
             Log.d("KOMPIS", "MainActivity.OnCreate - Creating ListDeparturesFragment");
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.main_fragment_container, new ListDeparturesFragment())
-                    .commit();
+
         } */
 
         handleIntent(getIntent());

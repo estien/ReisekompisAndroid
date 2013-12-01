@@ -46,6 +46,9 @@ public class ListDeparturesFragment extends BaseListFragment {
         lastUpdatedContainer = view.findViewById(R.id.last_updated_container);
         noDeparturesSelectedView = view.findViewById(R.id.no_departures_selected);
         progressBarLoading = view.findViewById(R.id.progress_bar_loading_departures);
+        lastUpdatedTime = (TextView) view.findViewById(R.id.last_updated_time);
+
+        refreshDepartures();
 
         return view;
     }
@@ -55,12 +58,13 @@ public class ListDeparturesFragment extends BaseListFragment {
         if (s == null) return;
 
         noDeparturesSelectedView.setVisibility(View.INVISIBLE);
-        progressBarLoading.setVisibility(View.VISIBLE);
+        //progressBarLoading.setVisibility(View.VISIBLE);
+
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             transportationTypes = objectMapper.readValue(s, TransportationType[].class);
-            //new PollAsyncTask().execute(asList(transportationTypes));
+            new PollAsyncTask().execute(Arrays.asList(transportationTypes));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -109,7 +113,7 @@ public class ListDeparturesFragment extends BaseListFragment {
         protected void onPostExecute(Departure[] departures) {
             Log.d(getClass().getName(), Arrays.toString(departures));
             DepartureAdapter adapter = new DepartureAdapter(getActivity(), R.id.departure_line_name, departures);
-            progressBarLoading.setVisibility(View.INVISIBLE);
+            //progressBarLoading.setVisibility(View.INVISIBLE);
             boolean anyDepartures = departures.length > 0;
             noDeparturesSelectedView.setVisibility(anyDepartures ? View.INVISIBLE : View.VISIBLE);
 
