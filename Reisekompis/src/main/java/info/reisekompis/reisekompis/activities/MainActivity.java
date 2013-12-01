@@ -58,7 +58,6 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
         else if (!isSearching()){
             getFragmentManager().beginTransaction()
                     .replace(R.id.main_fragment_container, new ListDeparturesFragment())
-                    .addToBackStack(null)
                     .commit();
         }
 
