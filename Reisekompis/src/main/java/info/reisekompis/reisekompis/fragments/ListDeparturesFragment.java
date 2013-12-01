@@ -1,5 +1,6 @@
 package info.reisekompis.reisekompis.fragments;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -112,7 +113,9 @@ public class ListDeparturesFragment extends BaseListFragment {
         @Override
         protected void onPostExecute(Departure[] departures) {
             Log.d(getClass().getName(), Arrays.toString(departures));
-            DepartureAdapter adapter = new DepartureAdapter(getActivity(), R.id.departure_line_name, departures);
+            Activity activity1 = getActivity();
+            if(activity1 == null) return; // is detached. temp
+            DepartureAdapter adapter = new DepartureAdapter(activity1, R.id.departure_line_name, departures);
             //progressBarLoading.setVisibility(View.INVISIBLE);
             boolean anyDepartures = departures.length > 0;
             noDeparturesSelectedView.setVisibility(anyDepartures ? View.INVISIBLE : View.VISIBLE);
@@ -120,7 +123,7 @@ public class ListDeparturesFragment extends BaseListFragment {
             DateTime now = new DateTime(DateTimeZone.getDefault());
             lastUpdatedTime.setText(now.toString("HH:mm:ss"));
 
-            if(anyDepartures) {
+            if (anyDepartures) {
                 lastUpdatedContainer.setVisibility(View.VISIBLE);
             }
 

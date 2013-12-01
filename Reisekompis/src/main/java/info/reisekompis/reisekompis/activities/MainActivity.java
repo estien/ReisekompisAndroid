@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
@@ -52,20 +51,13 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
         if (s == null) {
             // force search field or first time info popup
         }
-        else {
+        else if (!isSearching()){
             getFragmentManager().beginTransaction()
                     .replace(R.id.main_fragment_container, new ListDeparturesFragment())
                     .commit();
         }
 
-
-        /*
-        if (savedInstanceState == null) {
-            Log.d("KOMPIS", "MainActivity.OnCreate - Creating ListDeparturesFragment");
-
-        } */
-
-        handleIntent(getIntent());
+        handleSearch();
     }
 
     @Override
@@ -74,9 +66,13 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
         //refreshDepartures();
     }
 
-    private void handleIntent(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
+    private boolean isSearching() {
+        return Intent.ACTION_SEARCH.equals(getIntent().getAction());
+    }
+
+    private void handleSearch() {
+        if (isSearching()) {
+            String query = getIntent().getStringExtra(SearchManager.QUERY);
             if (query != null) {
                 query = query.trim();
                 if(query.length() < 4) return; // TODO: add dialog informing about minimum search length
