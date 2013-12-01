@@ -1,6 +1,7 @@
 package info.reisekompis.reisekompis.activities;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -57,7 +58,7 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
         }
         else if (!isSearching()){
             getFragmentManager().beginTransaction()
-                    .replace(R.id.main_fragment_container, new ListDeparturesFragment())
+                    .replace(R.id.main_fragment_container, new ListDeparturesFragment(), ListDeparturesFragment.TAG)
                     .commit();
         }
 
@@ -87,7 +88,7 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
 
                 getFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.main_fragment_container, findStopsFragment)
+                        .replace(R.id.main_fragment_container, findStopsFragment, FindStopsFragment.Tag)
                         .commit();
             }
         }
@@ -192,12 +193,15 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh :
-                //refreshDepartures();
+
+                ListDeparturesFragment listDeparturesFragment = (ListDeparturesFragment) getFragmentManager().findFragmentByTag(ListDeparturesFragment.TAG);
+                if(listDeparturesFragment != null) {
+                    listDeparturesFragment.refreshDepartures();
+                }
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
 }

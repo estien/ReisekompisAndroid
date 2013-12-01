@@ -33,6 +33,7 @@ import static info.reisekompis.reisekompis.configuration.Configuration.SHARED_PR
 
 public class ListDeparturesFragment extends BaseListFragment {
 
+    public static final String TAG = "fragment_list_departures";
     private TransportationType[] transportationTypes;
     private View lastUpdatedContainer;
 
@@ -56,7 +57,7 @@ public class ListDeparturesFragment extends BaseListFragment {
        refreshDepartures();
     }
 
-    private void refreshDepartures() {
+    public void refreshDepartures() {
         String s = getSharedPreferences().getString(SHARED_PREFERENCES_TRANSPORTATION_TYPES, null);
         if (s == null) return;
 

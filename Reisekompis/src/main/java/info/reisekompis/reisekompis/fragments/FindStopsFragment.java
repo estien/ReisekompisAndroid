@@ -2,8 +2,6 @@ package info.reisekompis.reisekompis.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.FragmentManager;
-import android.app.ListFragment;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,6 +28,9 @@ import static java.util.Arrays.asList;
 
 public class FindStopsFragment extends BaseListFragment {
     OnListItemSelectedListener listener;
+
+    public static final String Tag = "fragment_find_stops";
+
 
     @Override
     public void onStart() {
