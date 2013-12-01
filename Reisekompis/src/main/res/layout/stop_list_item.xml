@@ -44,24 +44,6 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="5dp"/>
         </LinearLayout>
-        <LinearLayout
-            android:id="@+id/tram_lines"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:orientation="horizontal"
-            android:layout_toRightOf="@id/bus_lines">
-            <ImageView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:src="@android:drawable/btn_star_big_on"/>
-            <TextView
-                android:id="@+id/tram_lines_text"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="1, 2, 3, 4, 5, 6"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp"/>
-        </LinearLayout>
     </RelativeLayout>
 
 </RelativeLayout>
