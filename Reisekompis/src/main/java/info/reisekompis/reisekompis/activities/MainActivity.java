@@ -161,8 +161,11 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
 
     private TransportationType[] GetStoredTransportationTypes(ObjectMapper mapper) {
         try {
-            TransportationType[] transportationTypes = mapper.readValue(sharedPreferences.getString(Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES, null), TransportationType[].class);// TODO make sure is not null
-            return transportationTypes != null ? transportationTypes : new TransportationType[0];
+            String value = sharedPreferences.getString(Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES, null);
+            if (value != null) {
+                TransportationType[] transportationTypes = mapper.readValue(value, TransportationType[].class);
+                return transportationTypes != null ? transportationTypes : new TransportationType[0];
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
