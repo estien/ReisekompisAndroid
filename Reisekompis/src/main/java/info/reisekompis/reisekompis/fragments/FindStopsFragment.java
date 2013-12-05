@@ -2,14 +2,17 @@ package info.reisekompis.reisekompis.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListFragment;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,16 +22,19 @@ import info.reisekompis.reisekompis.Stop;
 import info.reisekompis.reisekompis.StopsAdapter;
 import info.reisekompis.reisekompis.TransportationType;
 import info.reisekompis.reisekompis.activities.OnListItemSelectedListener;
+import info.reisekompis.reisekompis.configuration.ReisekompisService;
 
 import static java.util.Arrays.asList;
 
-public class StopListFragment extends ListFragment {
+public class FindStopsFragment extends BaseListFragment {
     OnListItemSelectedListener listener;
+
+    public static final String Tag = "fragment_find_stops";
+
+
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        StopsAdapter adapter = new StopsAdapter(getActivity(), R.layout.stop_list_item, new Stop[0]);
-        setListAdapter(adapter);
+    public void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -43,7 +49,11 @@ public class StopListFragment extends ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+
+        String searchQuery = ReisekompisService.SEARCH + getArguments().getString("query");
+        new SearchStopsAsyncTask().execute(searchQuery);
+
+        return inflater.inflate(R.layout.fragment_find_stops, container, false);
     }
 
     @Override
@@ -55,7 +65,7 @@ public class StopListFragment extends ListFragment {
         }
         final List<String> linesToAdd = new ArrayList<String>();
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
         alertDialogBuilder.setTitle(R.string.choose);
         String[] linesToShow = getLinesToShow(lines);
         alertDialogBuilder.setMultiChoiceItems(linesToShow, null, new DialogInterface.OnMultiChoiceClickListener() {
@@ -136,6 +146,36 @@ public class StopListFragment extends ListFragment {
         }
 
         return types;
+    }
+
+    class SearchStopsAsyncTask extends AsyncTask<String, Void, Stop[]> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            setProgressBarVisible(true);
+        }
+
+        @Override
+        protected Stop[] doInBackground(String... params) {
+            String jsonResponseString = getHttpClient().get(params[0]);
+            ObjectMapper mapper = new ObjectMapper();
+            Stop[] result;
+            try {
+                result = mapper.readValue(jsonResponseString, Stop[].class);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new Stop[0];
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Stop[] result) {
+            setProgressBarVisible(false);
+            StopsAdapter adapter = new StopsAdapter(activity, R.layout.stop_list_item, result);
+            FindStopsFragment.this.setListAdapter(adapter);
+        }
     }
 
 }

@@ -1,73 +1,174 @@
 package info.reisekompis.reisekompis.activities;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.SearchView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
-import info.reisekompis.reisekompis.Departure;
 import info.reisekompis.reisekompis.HttpClient;
 import info.reisekompis.reisekompis.Line;
 import info.reisekompis.reisekompis.R;
-import info.reisekompis.reisekompis.SimpleStop;
 import info.reisekompis.reisekompis.Stop;
 import info.reisekompis.reisekompis.TransportationType;
 import info.reisekompis.reisekompis.configuration.Configuration;
-import info.reisekompis.reisekompis.configuration.ReisekompisService;
+import info.reisekompis.reisekompis.fragments.FindStopsFragment;
+import info.reisekompis.reisekompis.fragments.ListDeparturesFragment;
 
-import static info.reisekompis.reisekompis.SimpleStop.simpleStopsFromStops;
+import static info.reisekompis.reisekompis.configuration.Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements OnListItemSelectedListener  {
+
 
     HttpClient httpClient;
+    SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+    private SearchView searchView;
+    private ProgressBar progressBar;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         httpClient = new HttpClient();
+        sharedPreferences = getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
-        SharedPreferences sharedPreferences = this.getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        String s = sharedPreferences.getString(SHARED_PREFERENCES_TRANSPORTATION_TYPES, null);
+        if (s == null) {
+            // force search field or first time info popup
+        }
+        else if (!isSearching()){
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.main_fragment_container, new ListDeparturesFragment(), ListDeparturesFragment.TAG)
+                    .commit();
+        }
 
-        List<TransportationType> lines = getDummyData();
-
-        new PollAsyncTask().execute(lines);
-
-//        startActivity(new Intent(this, FindStopsActivity.class));
+        handleSearch();
     }
 
-    private class PollAsyncTask extends AsyncTask<List<TransportationType>, Void, Departure[]> {
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
-        @Override
-        protected Departure[] doInBackground(List<TransportationType>... params) {
-            List<SimpleStop> simpleStops = new ArrayList<SimpleStop>();
-            for (TransportationType t : params[0]) {
-                simpleStops.addAll(simpleStopsFromStops(t.getStops()));
-            }
+    private boolean isSearching() {
+        return Intent.ACTION_SEARCH.equals(getIntent().getAction());
+    }
 
-            String jsonResponseString = httpClient.post(ReisekompisService.POLL, simpleStops);
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(new JodaModule());
-            Departure[] result;
-            try {
-                result = mapper.readValue(jsonResponseString, Departure[].class);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return new Departure[0];
+    private void handleSearch() {
+        if (isSearching()) {
+            String query = getIntent().getStringExtra(SearchManager.QUERY);
+            if (query != null) {
+                query = query.trim();
+                if(query.length() < 4) return; // TODO: add dialog informing about minimum search length
+
+                Bundle args = new Bundle();
+                args.putString("query", query);
+                FindStopsFragment findStopsFragment = new FindStopsFragment();
+                findStopsFragment.setArguments(args);
+
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main_fragment_container, findStopsFragment, FindStopsFragment.Tag)
+                        .commit();
             }
-            return result;
         }
     }
+
+    public ProgressBar getProgressBar() {
+        return progressBar;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        MenuItem searchMenuItem = menu.findItem(R.id.search);
+        searchView = (SearchView) searchMenuItem.getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        return true;
+    }
+
+    @Override
+    public void onListItemsSelected(List<TransportationType> types) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        TransportationType[] existingTransportationTypes = GetStoredTransportationTypes(mapper);
+        if(existingTransportationTypes.length > 0) {
+            types = MergeExistingWithSelectedTranportationTypes(existingTransportationTypes, types);
+        }
+
+        String json = null;
+        try {
+            json = mapper.writeValueAsString(types);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        editor = sharedPreferences.edit();
+        editor.putString(SHARED_PREFERENCES_TRANSPORTATION_TYPES, json);
+        editor.commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(isSearching()) {
+
+        }
+        super.onBackPressed();
+    }
+
+    public SharedPreferences getSharedPreferences() {
+        return sharedPreferences;
+    }
+
+    public HttpClient getHttpClient() {
+        return httpClient;
+    }
+
+    private List<TransportationType> MergeExistingWithSelectedTranportationTypes(TransportationType[] existingTransportationTypes, List<TransportationType> selectedLines) {
+        return selectedLines; // TODO implement
+    }
+
+    private void AddAllLines(HashSet<Line> allLines, TransportationType[] types) {
+        for (TransportationType type : types) {
+            for (Stop stop : type.getStops()) {
+                for(Line line : stop.getLines()) {
+                    allLines.add(line);
+                }
+            }
+        }
+    }
+
+    private TransportationType[] GetStoredTransportationTypes(ObjectMapper mapper) {
+        try {
+            TransportationType[] transportationTypes = mapper.readValue(sharedPreferences.getString(Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES, null), TransportationType[].class);// TODO make sure is not null
+            return transportationTypes != null ? transportationTypes : new TransportationType[0];
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new TransportationType[0];
+    }
+
 
     private List<TransportationType> getDummyData() {
         List<TransportationType> list = new ArrayList<TransportationType>();
@@ -86,5 +187,21 @@ public class MainActivity extends Activity {
         list.add(new TransportationType(stops2, TransportationType.Type.BUS));
 
         return list;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh :
+
+                ListDeparturesFragment listDeparturesFragment = (ListDeparturesFragment) getFragmentManager().findFragmentByTag(ListDeparturesFragment.TAG);
+                if(listDeparturesFragment != null) {
+                    listDeparturesFragment.refreshDepartures();
+                }
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
