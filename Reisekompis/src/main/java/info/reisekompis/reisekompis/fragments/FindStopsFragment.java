@@ -2,7 +2,6 @@ package info.reisekompis.reisekompis.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,7 +28,6 @@ import static java.util.Arrays.asList;
 
 public class FindStopsFragment extends BaseListFragment {
     OnListItemSelectedListener listener;
-
     public static final String Tag = "fragment_find_stops";
 
 
@@ -58,7 +56,6 @@ public class FindStopsFragment extends BaseListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         String searchQuery = ReisekompisService.SEARCH + getArguments().getString("query");
         new SearchStopsAsyncTask().execute(searchQuery);
 
@@ -166,7 +163,8 @@ public class FindStopsFragment extends BaseListFragment {
 
         @Override
         protected Stop[] doInBackground(String... params) {
-            String jsonResponseString = getHttpClient().get(params[0]);
+            String url = params[0].replace(" ", "%20");
+            String jsonResponseString = getHttpClient().get(url);
             ObjectMapper mapper = new ObjectMapper();
             Stop[] result;
             try {
