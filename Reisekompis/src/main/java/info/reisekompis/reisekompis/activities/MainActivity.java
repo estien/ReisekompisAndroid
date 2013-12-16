@@ -80,12 +80,7 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
             if (query != null) {
                 query = query.trim();
                 if(query.length() < 4) return; // TODO: add dialog informing about minimum search length
-
-                Bundle args = new Bundle();
-                args.putString("query", query);
-                FindStopsFragment findStopsFragment = new FindStopsFragment();
-                findStopsFragment.setArguments(args);
-
+                FindStopsFragment findStopsFragment = FindStopsFragment.newInstance(query);
                 getFragmentManager()
                         .beginTransaction()
                         .replace(R.id.main_fragment_container, findStopsFragment, FindStopsFragment.Tag)

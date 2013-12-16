@@ -2,6 +2,7 @@ package info.reisekompis.reisekompis.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -35,6 +36,14 @@ public class FindStopsFragment extends BaseListFragment {
     @Override
     public void onStart() {
         super.onStart();
+    }
+
+    public static FindStopsFragment newInstance(String query) {
+        Bundle args = new Bundle();
+        args.putString("query", query);
+        FindStopsFragment findStopsFragment = new FindStopsFragment();
+        findStopsFragment.setArguments(args);
+        return findStopsFragment;
     }
 
     @Override
