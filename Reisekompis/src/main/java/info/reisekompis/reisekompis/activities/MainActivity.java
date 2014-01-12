@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -137,7 +138,11 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
     }
 
     private List<TransportationType> MergeExistingWithSelectedTranportationTypes(TransportationType[] existingTransportationTypes, List<TransportationType> selectedLines) {
-        return selectedLines; // TODO implement
+        List<TransportationType> mergedLines = new ArrayList<TransportationType>();
+        mergedLines.addAll(selectedLines);
+        Collections.addAll(mergedLines, existingTransportationTypes);
+
+        return mergedLines;
     }
 
     private void AddAllLines(HashSet<Line> allLines, TransportationType[] types) {
