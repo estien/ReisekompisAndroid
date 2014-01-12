@@ -32,7 +32,11 @@ public class PrefsFragment extends PreferenceFragment{
 
         sharedPreferences = getActivity().getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, getActivity().MODE_PRIVATE);
         sharedPreferencesHelper = new SharedPreferencesHelper();
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
         TransportationType[] existingTransportationTypes = sharedPreferencesHelper.getStoredTransportationTypes(sharedPreferences, new ObjectMapper());
         populateExistingPreferences(existingTransportationTypes);
 
