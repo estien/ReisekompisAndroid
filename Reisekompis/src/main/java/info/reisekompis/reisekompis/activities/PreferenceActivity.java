@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import info.reisekompis.reisekompis.R;
+import info.reisekompis.reisekompis.SharedPreferencesHelper;
 import info.reisekompis.reisekompis.fragments.PrefsFragment;
 
 public class PreferenceActivity extends Activity {

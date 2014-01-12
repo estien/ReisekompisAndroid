@@ -26,6 +26,7 @@ import java.util.List;
 import info.reisekompis.reisekompis.HttpClient;
 import info.reisekompis.reisekompis.Line;
 import info.reisekompis.reisekompis.R;
+import info.reisekompis.reisekompis.SharedPreferencesHelper;
 import info.reisekompis.reisekompis.Stop;
 import info.reisekompis.reisekompis.StopsAdapter;
 import info.reisekompis.reisekompis.TransportationType;
@@ -39,6 +40,7 @@ public class SubscribeToLinesActivity extends ListActivity implements OnListItem
 
     private SharedPreferences sharedPreferences;
     private ProgressBar progressBar;
+    private SharedPreferencesHelper sharedPreferencesHelper;
     protected HttpClient httpClient;
     MenuItem searchMenuItem;
 
@@ -47,6 +49,7 @@ public class SubscribeToLinesActivity extends ListActivity implements OnListItem
         super.onCreate(savedInstanceState);
         setContentView(R.layout.subscribe);
         sharedPreferences = getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        sharedPreferencesHelper = new SharedPreferencesHelper();
         httpClient = new HttpClient();
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         handleSearch();
@@ -70,7 +73,7 @@ public class SubscribeToLinesActivity extends ListActivity implements OnListItem
     public void onListItemsSelected(List<TransportationType> types) {
         ObjectMapper mapper = new ObjectMapper();
 
-        TransportationType[] existingTransportationTypes = GetStoredTransportationTypes(mapper);
+        TransportationType[] existingTransportationTypes = sharedPreferencesHelper.getStoredTransportationTypes(sharedPreferences, mapper);
         if(existingTransportationTypes.length > 0) {
             types = mergeExistingWithSelectedTranportationTypes(existingTransportationTypes, types);
         }
@@ -93,19 +96,6 @@ public class SubscribeToLinesActivity extends ListActivity implements OnListItem
 
     private List<TransportationType> mergeExistingWithSelectedTranportationTypes(TransportationType[] existingTransportationTypes, List<TransportationType> selectedLines) {
         return selectedLines; // TODO implement
-    }
-
-    private TransportationType[] GetStoredTransportationTypes(ObjectMapper mapper) {
-        try {
-            String value = sharedPreferences.getString(Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES, null);
-            if (value != null) {
-                TransportationType[] transportationTypes = mapper.readValue(value, TransportationType[].class);
-                return transportationTypes != null ? transportationTypes : new TransportationType[0];
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new TransportationType[0];
     }
 
     private boolean isSearching() {
