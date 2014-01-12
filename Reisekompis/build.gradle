@@ -20,6 +20,11 @@ android {
         minSdkVersion 14
         targetSdkVersion 19
     }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
 }
 
 dependencies {
