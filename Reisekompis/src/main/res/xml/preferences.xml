@@ -1,0 +1,14 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Søkeinnstillinger">
+        <MultiSelectListPreference
+            android:key="linje_preference"
+            android:title="Linjer"
+            android:summary="Velg linjer det skal søkes på"
+            android:entries="@array/preferred_lines"
+            android:entryValues="@array/preferred_lines_values"
+            android:dialogTitle="Lagrede linjer"/>
+    </PreferenceCategory>
+</PreferenceScreen>

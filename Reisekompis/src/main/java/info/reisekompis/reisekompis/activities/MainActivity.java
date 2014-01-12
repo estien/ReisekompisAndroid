@@ -1,7 +1,6 @@
 package info.reisekompis.reisekompis.activities;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 
@@ -41,8 +39,6 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
     private SharedPreferences.Editor editor;
     private SearchView searchView;
     private ProgressBar progressBar;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,12 +187,15 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh :
-
                 ListDeparturesFragment listDeparturesFragment = (ListDeparturesFragment) getFragmentManager().findFragmentByTag(ListDeparturesFragment.TAG);
                 if(listDeparturesFragment != null) {
                     listDeparturesFragment.refreshDepartures();
                 }
 
+                return true;
+            case R.id.settings :
+                Intent preferenceIntent = new Intent(this, PreferenceActivity.class);
+                startActivity(preferenceIntent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
