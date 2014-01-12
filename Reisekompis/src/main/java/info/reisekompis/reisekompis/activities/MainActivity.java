@@ -4,21 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-
-import info.reisekompis.reisekompis.Line;
 import info.reisekompis.reisekompis.R;
-import info.reisekompis.reisekompis.SharedPreferencesHelper;
-import info.reisekompis.reisekompis.Stop;
-import info.reisekompis.reisekompis.TransportationType;
-import info.reisekompis.reisekompis.configuration.Configuration;
 import info.reisekompis.reisekompis.fragments.ListDeparturesFragment;
 
 import static info.reisekompis.reisekompis.configuration.Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES;
