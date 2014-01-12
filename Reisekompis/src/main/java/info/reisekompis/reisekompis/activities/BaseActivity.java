@@ -13,7 +13,6 @@ public class BaseActivity extends Activity {
 
     protected HttpClient httpClient;
     protected SharedPreferences sharedPreferences;
-    protected SharedPreferences.Editor editor;
 
     private ProgressBar progressBar;
 
