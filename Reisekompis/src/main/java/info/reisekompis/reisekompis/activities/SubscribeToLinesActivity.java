@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import info.reisekompis.reisekompis.HttpClient;
@@ -95,7 +96,11 @@ public class SubscribeToLinesActivity extends ListActivity implements OnListItem
     }
 
     private List<TransportationType> mergeExistingWithSelectedTranportationTypes(TransportationType[] existingTransportationTypes, List<TransportationType> selectedLines) {
-        return selectedLines; // TODO implement
+        List<TransportationType> mergedLines = new ArrayList<TransportationType>();
+        mergedLines.addAll(selectedLines);
+        Collections.addAll(mergedLines, existingTransportationTypes);
+
+        return mergedLines;
     }
 
     private boolean isSearching() {
