@@ -6,11 +6,12 @@ import android.os.Bundle;
 import info.reisekompis.reisekompis.R;
 import info.reisekompis.reisekompis.fragments.PrefsFragment;
 
-public class PreferenceActivity extends Activity{
+public class PreferenceActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.preferences);
+
         PrefsFragment prefsFragment = PrefsFragment.newInstance();
         getFragmentManager()
                 .beginTransaction()

@@ -14,7 +14,6 @@ import android.widget.SearchView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -23,6 +22,7 @@ import java.util.List;
 import info.reisekompis.reisekompis.HttpClient;
 import info.reisekompis.reisekompis.Line;
 import info.reisekompis.reisekompis.R;
+import info.reisekompis.reisekompis.SharedPreferencesHelper;
 import info.reisekompis.reisekompis.Stop;
 import info.reisekompis.reisekompis.TransportationType;
 import info.reisekompis.reisekompis.configuration.Configuration;
@@ -40,6 +40,7 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
     private SharedPreferences.Editor editor;
     private SearchView searchView;
     private ProgressBar progressBar;
+    private SharedPreferencesHelper sharedPreferencesHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
         httpClient = new HttpClient();
         sharedPreferences = getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        sharedPreferencesHelper = new SharedPreferencesHelper();
 
         String s = sharedPreferences.getString(SHARED_PREFERENCES_TRANSPORTATION_TYPES, null);
         if (s == null) {
@@ -104,7 +106,7 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
     public void onListItemsSelected(List<TransportationType> types) {
         ObjectMapper mapper = new ObjectMapper();
 
-        TransportationType[] existingTransportationTypes = GetStoredTransportationTypes(mapper);
+        TransportationType[] existingTransportationTypes = sharedPreferencesHelper.getStoredTransportationTypes(sharedPreferences, mapper);
         if(existingTransportationTypes.length > 0) {
             types = MergeExistingWithSelectedTranportationTypes(existingTransportationTypes, types);
         }
@@ -154,20 +156,6 @@ public class MainActivity extends Activity implements OnListItemSelectedListener
             }
         }
     }
-
-    private TransportationType[] GetStoredTransportationTypes(ObjectMapper mapper) {
-        try {
-            String value = sharedPreferences.getString(Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES, null);
-            if (value != null) {
-                TransportationType[] transportationTypes = mapper.readValue(value, TransportationType[].class);
-                return transportationTypes != null ? transportationTypes : new TransportationType[0];
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new TransportationType[0];
-    }
-
 
     private List<TransportationType> getDummyData() {
         List<TransportationType> list = new ArrayList<TransportationType>();

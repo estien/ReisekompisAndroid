@@ -2,13 +2,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:title="Søkeinnstillinger">
+        android:title="Innstillinger">
         <MultiSelectListPreference
-            android:key="linje_preference"
-            android:title="Linjer"
-            android:summary="Velg linjer det skal søkes på"
+            android:key="line_preference"
+            android:title="Linjevalg"
+            android:summary="Velg linjer du vil se avganger for"
             android:entries="@array/preferred_lines"
             android:entryValues="@array/preferred_lines_values"
-            android:dialogTitle="Lagrede linjer"/>
+            android:dialogTitle="Velg linjer"/>
     </PreferenceCategory>
 </PreferenceScreen>
