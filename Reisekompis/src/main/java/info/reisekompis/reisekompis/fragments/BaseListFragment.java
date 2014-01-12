@@ -7,15 +7,16 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import info.reisekompis.reisekompis.HttpClient;
+import info.reisekompis.reisekompis.activities.BaseActivity;
 import info.reisekompis.reisekompis.activities.MainActivity;
 
 public class BaseListFragment extends ListFragment {
 
-    protected MainActivity activity;
+    protected BaseActivity activity;
 
     @Override
     public void onAttach(Activity activity) {
-        this.activity = (MainActivity) activity;
+        this.activity = (BaseActivity) activity;
         super.onAttach(activity);
     }
 
@@ -28,6 +29,9 @@ public class BaseListFragment extends ListFragment {
     }
 
     public void setProgressBarVisible(boolean visible) {
-        activity.getProgressBar().setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+        ProgressBar progressBar = activity.getProgressBar();
+        if (progressBar != null) {
+            progressBar.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+        }
     }
 }

@@ -10,5 +10,8 @@
             android:entries="@array/preferred_lines"
             android:entryValues="@array/preferred_lines_values"
             android:dialogTitle="Velg linjer"/>
+        <Preference android:title="Legg til linjer">
+            <intent android:action=".activities.SubscribeToLinesActivity" />
+        </Preference>
     </PreferenceCategory>
 </PreferenceScreen>
