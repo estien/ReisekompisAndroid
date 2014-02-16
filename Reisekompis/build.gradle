@@ -32,4 +32,5 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.2.3'
     compile 'joda-time:joda-time:2.3'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.3.0'
+    compile 'com.squareup.retrofit:retrofit:1.4.1'
 }

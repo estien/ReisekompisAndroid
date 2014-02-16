@@ -5,10 +5,9 @@ import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,12 +18,10 @@ import android.widget.SearchView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import info.reisekompis.reisekompis.HttpClient;
 import info.reisekompis.reisekompis.Line;
 import info.reisekompis.reisekompis.R;
 import info.reisekompis.reisekompis.SharedPreferencesHelper;
@@ -32,8 +29,13 @@ import info.reisekompis.reisekompis.Stop;
 import info.reisekompis.reisekompis.StopsAdapter;
 import info.reisekompis.reisekompis.TransportationType;
 import info.reisekompis.reisekompis.configuration.Configuration;
-import info.reisekompis.reisekompis.configuration.ReisekompisService;
+import info.reisekompis.reisekompis.retrofit.RetrofitService;
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
+import static info.reisekompis.reisekompis.configuration.Configuration.RETROFIT_SERVICE_BASE_PATH;
 import static info.reisekompis.reisekompis.configuration.Configuration.SHARED_PREFERENCES_TRANSPORTATION_TYPES;
 import static java.util.Arrays.asList;
 
@@ -42,7 +44,6 @@ public class SubscribeToLinesActivity extends ListActivity implements OnListItem
     private SharedPreferences sharedPreferences;
     private ProgressBar progressBar;
     private SharedPreferencesHelper sharedPreferencesHelper;
-    protected HttpClient httpClient;
     MenuItem searchMenuItem;
 
     @Override
@@ -51,7 +52,6 @@ public class SubscribeToLinesActivity extends ListActivity implements OnListItem
         setContentView(R.layout.subscribe);
         sharedPreferences = getSharedPreferences(Configuration.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         sharedPreferencesHelper = new SharedPreferencesHelper();
-        httpClient = new HttpClient();
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         handleSearch();
     }
@@ -91,10 +91,6 @@ public class SubscribeToLinesActivity extends ListActivity implements OnListItem
         editor.commit();
     }
 
-    public HttpClient getHttpClient() {
-        return httpClient;
-    }
-
     private List<TransportationType> mergeExistingWithSelectedTranportationTypes(TransportationType[] existingTransportationTypes, List<TransportationType> selectedLines) {
         List<TransportationType> mergedLines = new ArrayList<TransportationType>();
         mergedLines.addAll(selectedLines);
@@ -103,51 +99,32 @@ public class SubscribeToLinesActivity extends ListActivity implements OnListItem
         return mergedLines;
     }
 
-    private boolean isSearching() {
-        return Intent.ACTION_SEARCH.equals(getIntent().getAction());
-    }
-
     private void handleSearch() {
-        if (isSearching()) {
-            String query = getIntent().getStringExtra(SearchManager.QUERY);
-            if (query != null) {
-                query = query.trim();
-                if(query.length() < 4) return; // TODO: add dialog informing about minimum search length
-                String searchQuery = ReisekompisService.SEARCH + query;
-                new SearchStopsAsyncTask().execute(searchQuery);
-            }
-        }
-    }
-
-    class SearchStopsAsyncTask extends AsyncTask<String, Void, Stop[]> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint(RETROFIT_SERVICE_BASE_PATH)
+                .build();
+        RetrofitService retrofitService = restAdapter.create(RetrofitService.class);
+        String query = getIntent().getStringExtra(SearchManager.QUERY);
+        if (query != null) {
+            query = query.trim();
+            if(query.length() < 4) return;
             setProgressBarVisible(true);
-        }
+            retrofitService.searchForStops(query, new Callback<Stop[]>() {
+                @Override
+                public void success(Stop[] stops, Response response) {
+                    setProgressBarVisible(false);
+                    searchMenuItem.collapseActionView();
+                    StopsAdapter adapter = new StopsAdapter(getApplicationContext(),
+                            R.layout.stop_list_item, stops);
+                    setListAdapter(adapter);
+                }
 
-        @Override
-        protected Stop[] doInBackground(String... params) {
-            String url = params[0].replace(" ", "%20");
-            String jsonResponseString = getHttpClient().get(url);
-            ObjectMapper mapper = new ObjectMapper();
-            Stop[] result;
-            try {
-                result = mapper.readValue(jsonResponseString, Stop[].class);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return new Stop[0];
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Stop[] result) {
-            setProgressBarVisible(false);
-            searchMenuItem.collapseActionView();
-            StopsAdapter adapter = new StopsAdapter(getApplicationContext(), R.layout.stop_list_item, result);
-            setListAdapter(adapter);
+                @Override
+                public void failure(RetrofitError retrofitError) {
+                    setProgressBarVisible(false);
+                    Log.e("Error in stopSearch", retrofitError.getMessage());
+                }
+            });
         }
     }
 

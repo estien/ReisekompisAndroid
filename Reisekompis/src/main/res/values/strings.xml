@@ -4,7 +4,7 @@
     <string name="app_name">Reisekompis</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="search_hint">Liverpool is the shit</string>
+    <string name="search_hint">Skriv inn stoppnavn</string>
     <string name="choose">Velg</string>
     <string name="save">Lagre</string>
     <string name="settings">Innstillinger</string>

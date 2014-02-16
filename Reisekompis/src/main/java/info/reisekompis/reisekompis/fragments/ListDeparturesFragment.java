@@ -36,7 +36,6 @@ public class ListDeparturesFragment extends BaseListFragment {
     public static final String TAG = "fragment_list_departures";
     private TransportationType[] transportationTypes;
     private View lastUpdatedContainer;
-
     private TextView lastUpdatedTime;
     private View noDeparturesSelectedView;
 
