@@ -29,7 +29,7 @@ import info.reisekompis.reisekompis.Stop;
 import info.reisekompis.reisekompis.StopsAdapter;
 import info.reisekompis.reisekompis.TransportationType;
 import info.reisekompis.reisekompis.configuration.Configuration;
-import info.reisekompis.reisekompis.retrofit.RetrofitService;
+import info.reisekompis.reisekompis.retrofit.ReisekompisHttpService;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -103,13 +103,13 @@ public class SubscribeToLinesActivity extends ListActivity implements OnListItem
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(RETROFIT_SERVICE_BASE_PATH)
                 .build();
-        RetrofitService retrofitService = restAdapter.create(RetrofitService.class);
+        ReisekompisHttpService reisekompisHttpService = restAdapter.create(ReisekompisHttpService.class);
         String query = getIntent().getStringExtra(SearchManager.QUERY);
         if (query != null) {
             query = query.trim();
             if(query.length() < 4) return;
             setProgressBarVisible(true);
-            retrofitService.searchForStops(query, new Callback<Stop[]>() {
+            reisekompisHttpService.searchForStops(query, new Callback<Stop[]>() {
                 @Override
                 public void success(Stop[] stops, Response response) {
                     setProgressBarVisible(false);

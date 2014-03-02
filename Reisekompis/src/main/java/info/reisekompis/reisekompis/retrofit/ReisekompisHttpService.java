@@ -6,7 +6,7 @@ import retrofit.Callback;
 import retrofit.http.GET;
 import retrofit.http.Path;
 
-public interface RetrofitService {
+public interface ReisekompisHttpService {
     @GET(ReisekompisService.SEARCH + "/{query}")
     void searchForStops(@Path("query") String stopQuery, Callback<Stop[]> cb);
 }
